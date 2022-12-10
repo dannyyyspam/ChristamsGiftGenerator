@@ -50,6 +50,9 @@
   margin-bottom: 12px;
   margin-top: 4px;
 }
+.main .loading {
+  width: 50;
+}
 .main ::placeholder {
   color: #8e8ea0;
   opacity: 1;

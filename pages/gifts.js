@@ -10,21 +10,31 @@ export default function Home() {
   const [priceMax, setPriceMax] = useState("100");
   const [hobbies, setHobbies] = useState("");
 
+  const [loading, setLoading] = useState("false");
   const [result, setResult] = useState();
 
   async function onSubmit(event) {
     event.preventDefault();
+    // if (loading) {
+    //   return;
+    // }
+    // setLoading(true);
 
-    const response = await fetch("/api/generate-gifts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ animal: animalInput }),
-    });
-    const data = await response.json();
-    setResult(data.result);
-    setAnimalInput("");
+    try {
+      const response = await fetch("/api/generate-gifts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ priceMin, priceMax, gender, age, hobbies }),
+      });
+      const data = await response.json();
+      setResult(data.result.replaceAll("\n", "<br/>"));
+    } catch (e) {
+      alert("Failed to generate gift ideas. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -90,7 +100,18 @@ export default function Home() {
           <input type="submit" value="Generate gift ideas" />
         </form>
 
-        <div className={styles.result}>{result}</div>
+        {loading && (
+          <div>
+            <h3>Looking for the best gift ideas 🎁 💡</h3>
+            <img src="/loading.gif" className={styles.loading} />
+          </div>
+        )}
+        {result && (
+          <div
+            className={styles.result}
+            dangerouslySetInnerHTML={{ __html: result }}
+          />
+        )}
       </main>
     </div>
   );
